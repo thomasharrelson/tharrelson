@@ -1,14 +1,17 @@
 import java.util.*;
 import java.util.logging.Logger;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
 import broad.core.parser.CommandLineParser;
+import broad.pda.annotation.BEDFileParser;
 
 import net.sf.samtools.util.CloseableIterator;
 import nextgen.core.annotation.Annotation.Strand;
+import nextgen.core.annotation.BasicAnnotation;
 import nextgen.core.annotation.Gene;
 import nextgen.core.feature.GenomeWindow;
 
@@ -23,8 +26,11 @@ public class TalenDesigner {
 	 */
 	private Collection<Gene> genes2cut;
 	private static String filename;
-	private Collection<TreeSet<GenomeWindow>> broadRegions;
-	private Collection<TreeSet<GenomeWindow>> cutRegions;	// ask Pam about which set would be best here.
+	private Map<Gene,GenomeWindow> broadRegions;
+	private Map<Gene,ArrayList<GenomeWindow>> cutRegions;	// ask Pam about which set would be best here.
+	private Collection<Gene> h3k4Track;
+	private Collection<Gene> homologyTrack;
+	private Collection<Gene> repeatTrack;
 	
 	Logger logger = Logger.getLogger(TalenDesigner.class.getName());
 	
@@ -38,7 +44,7 @@ public class TalenDesigner {
 		switch (fileType) {
 		case 'n': nameConstruct(r1);break;
 		case 'p': posConstruct(r1);break;
-		case 'b': bedConstruct(r1);break;
+		case 'b': bedConstruct(filename);break;
 		default: r1.close(); throw new IllegalArgumentException(fileType + " is not a valid file type");
 		}
 		// use genes2cut to create broadRegions
@@ -55,10 +61,29 @@ public class TalenDesigner {
 		TreeSet<GenomeWindow> cutRegions = new TreeSet<GenomeWindow>();
 		while (iter.hasNext()) {
 			Gene g = iter.next();
-			int geneStart = g.getStart();
-			Strand orientation = g.getStrand();
-			// TODO: figure out how to use the enum Strand, so that I can get the proper window
-			GenomeWindow gWin = new GenomeWindow(chr,start,stop,orientation);
+			int start;
+			int stop;
+			GenomeWindow gWin;
+			if (g.isNegativeStrand()) {
+				start = g.getStart();
+				stop = g.getEnd() + 5000;
+				
+				Strand orientation = g.getStrand();
+				// TODO: figure out how to use the enum Strand, so that I can get the proper window
+				gWin = new GenomeWindow(new BasicAnnotation(g.getChr(),start,stop,orientation));
+				gWin.addSourceAnnotation(gWin);
+			} else {
+				if (g.getStart()>=5000) {
+					start = g.getStart() - 5000;
+				} else {
+					start = 0;
+				}
+				stop = g.getEnd();
+				Strand orientation = g.getStrand();
+				gWin = new GenomeWindow(new BasicAnnotation(g.getChr(),start,stop,orientation));
+				gWin.addSourceAnnotation(g);
+			}
+			broadRegions.put(g, gWin);
 		}
 	}
 	
@@ -77,10 +102,13 @@ public class TalenDesigner {
 			genes2cut.add(gene);
 			line = r1.readLine();
 		}
+		return;
 	}
 	
-	private void bedConstruct(BufferedReader r1) {
-		throw new IllegalArgumentException("Class not implemented for construction with a bed file of genes");
+	private void bedConstruct(String file) throws IOException {
+		genes2cut = BEDFileParser.loadData(new File(file));
+		return;
+		//throw new IllegalArgumentException("Class not implemented for construction with a bed file of genes");
 	}
 	
 	/**
