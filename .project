@@ -3,6 +3,7 @@
 	<name>Tharrelson</name>
 	<comment></comment>
 	<projects>
+		<project>ScriptureV2</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

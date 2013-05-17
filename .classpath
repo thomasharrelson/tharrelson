@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ScriptureV2"/>
-	<classpathentry kind="lib" path="/ScriptureV2/lib/a_sam-1.48.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/ATV-3.1.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/colt-1.2.0.jar"/>
@@ -25,9 +24,10 @@
 	<classpathentry kind="lib" path="/ScriptureV2/lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/picard-1.71.jar"/>
-	<classpathentry kind="lib" path="/ScriptureV2/lib/sam-1.71.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/ssj.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/tribble-0.1.jar"/>
 	<classpathentry kind="lib" path="/ScriptureV2/lib/vcf.jar"/>
+	<classpathentry kind="lib" path="/ScriptureV2/lib/java-genomics-io.20120520.jar"/>
+	<classpathentry kind="lib" path="/ScriptureV2/lib/sam-1.89.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
